@@ -1,5 +1,6 @@
 import datetime
-from typing import Optional
+from enum import Enum
+from typing import List, Optional
 from fastapi import FastAPI, requests
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
@@ -7,21 +8,31 @@ from pydantic import BaseModel
 
 class Request(BaseModel):
     id: int
-    date_added: datetime.datetime
+    startDate: datetime.date
     device: str
     problemtype: str
     description: str
     client: str
-    status: str #в ожидании,в работе,выполнено
+    status: str
 
-repo = []
+class RequestStatus(str, Enum):
+    pending = "в ожидании"
+    in_progress = "в работе"
+    completed = "выполнено"
 
+repo = [
+    Request(id=1, 
+            startDate=datetime.date(2024, 11, 1), 
+            device="Ноутбук", 
+            problemtype="Не включается", 
+            description="Не включается экран",
+            client="Иван Иванов", 
+            status="в ожидании")
+]
+next_id = 2
 app = FastAPI()
 
-message = ""
+@app.get("/requests/", response_model=List[Request])
+def get_requests():
+    return repo
 
-@app.post("/requests/", response_model=Request)
-def get_requests(param: Optional[int] = None):
-    if param:
-        return {"repo": [o for o in repo if o.number == param]}
-    return {"repo": repo}
