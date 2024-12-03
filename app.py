@@ -40,7 +40,7 @@ next_id = 3
 
 app = FastAPI()
 
-@app.get("/requests/", response_model=List[Request])
+@app.get("/requests", response_model=List[Request])
 def get_requests():
     return repo
 @app.get("/requests/{request_id}", response_model=Request)
@@ -50,3 +50,24 @@ def get_request(request_id: int):
             return db_request
     raise HTTPException(status_code=404, detail="Заявка не найдена")
 
+@app.post("/requests")
+def create_request(
+    id: int = Form(...),
+    startDate: str = Form(...), 
+    device: str = Form(...),
+    problemtype: str = Form(...),
+    description: str = Form(...),
+    client: str = Form(...),
+    status: str = Form(...)
+):
+    new_request = Request(
+        id=id,
+        startDate=startDate,
+        device=device,
+        problemtype=problemtype,
+        description=description,
+        client=client,
+        status=status
+    )
+    repo.append(new_request)
+    return new_request
