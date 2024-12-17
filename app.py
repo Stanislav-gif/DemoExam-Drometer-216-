@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Annotated, List, Optional
 from fastapi import FastAPI, Form, HTTPException
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 
 class Request(BaseModel):
@@ -44,6 +45,14 @@ repo = [
 next_id = 3
 
 app = FastAPI()
+
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins = ["*"],
+  allow_methods = ["*"],
+  allow_headers = ["*"]
+)
+
 
 message = ""
 
