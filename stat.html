@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <a href="create.html">Создание заявки</a>
+    <a href="request.html">Список заявок</a>
+    <a href="update.html">Обновление заявки</a><br>
+    <a href="stat.html">Статистика</a><br>
+        Количество выполненных заявок: 
+            <span id="count_completed_requests"></span><br>
+        Среднее время выполенния заявки: 
+            <span id="calculate_average_completion_time()"></span>дней<br>
+        <h3>Статистика по типам неисправностей<br></h3>
+        <table>
+            <thead>
+                <th>Тип неиспрановстей</th>
+                <th>Количество</th>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <style>
+            th, td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+    
+            th {
+                background-color: #2fca29;
+                color: white;
+            }
+    
+            tr:hover {background-color: #f1f1f1;}
+        </style>
+        <script>
+            let complete_сount = document.getElementById("count_completed_requests");
+            let average_time_to_complete = document.getElementById("calculate_average_completion_time");
+            let stat_table = document.querySelector("tbody");
+            
+            get_statistics();
+            
+            async function get_statistics()
+            {
+                let data = await fetch("http://127.0.0.1:8000/statistics");
+                let stat = await data.json();
+
+                complete_сount.append(stat.count_completed_requests);
+                average_time_to_complete.append(stat.calculate_average_completion_time);
+                for (var key of Object.keys(stat_problem_type_stat)) {
+                    let tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+                    <td>${key}</td>
+                    <td>${stat.problem_type_stat[key]}</td>`;
+                    stat.table.append(tr);
+                }
+            }
+        </script>
+</body>
+</html>
